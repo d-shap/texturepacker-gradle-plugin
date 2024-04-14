@@ -50,10 +50,10 @@ public class TexturePackerGradleAction implements Action<Task> {
         if (Logger.isWarnEnabled()) {
             Logger.warn("Start processing images with TexturePacker");
         }
-        if (_extensionConfiguration != null) {
-            Logger.warn("_extensionConfiguration:" + _extensionConfiguration);
-        }
         if (Logger.isWarnEnabled()) {
+            if (_extensionConfiguration != null) {
+                Logger.warn("_extensionConfiguration:" + COMMAND);
+            }
             Logger.warn("Finish processing images with TexturePacker");
         }
     }
