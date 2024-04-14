@@ -34,9 +34,9 @@ import ru.d_shap.gradle.plugin.texturepacker.configuration.ExtensionConfiguratio
  */
 public class TexturePackerGradlePlugin implements Plugin<Project> {
 
-    private static final String EXTENSION_NAME = "texturepacker";
+    static final String TASK_NAME = "texturepacker";
 
-    private static final String TASK_NAME = "texturepacker";
+    static final String EXTENSION_NAME = "texturePacker";
 
     /**
      * Create new object.
