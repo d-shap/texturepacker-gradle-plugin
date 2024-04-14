@@ -22,6 +22,7 @@ package ru.d_shap.gradle.plugin.texturepacker;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.UnknownTaskException;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.tasks.TaskContainer;
 
@@ -34,9 +35,9 @@ import ru.d_shap.gradle.plugin.texturepacker.configuration.ExtensionConfiguratio
  */
 public class TexturePackerGradlePlugin implements Plugin<Project> {
 
-    static final String TASK_NAME = "texturepacker";
+    static final String TASK_NAME = "texturePacker";
 
-    static final String EXTENSION_NAME = "texturePacker";
+    static final String EXTENSION_NAME = "texturepacker";
 
     /**
      * Create new object.
@@ -53,11 +54,18 @@ public class TexturePackerGradlePlugin implements Plugin<Project> {
         TexturePackerGradleAction texturePackerAction = new TexturePackerGradleAction(extensionConfiguration);
         texturePackerTask.doLast(texturePackerAction);
 
-        TaskContainer tasks = project.getTasks();
-        Task processResourcesTask = tasks.getByName("processResources");
-        processResourcesTask.dependsOn(texturePackerTask);
-        Task compileJavaTask = tasks.getByName("compileJava");
-        compileJavaTask.dependsOn(texturePackerTask);
+        TaskContainer taskContainer = project.getTasks();
+        addDependency(taskContainer, "processResources", texturePackerTask);
+        addDependency(taskContainer, "compileJava", texturePackerTask);
+    }
+
+    private void addDependency(final TaskContainer taskContainer, final String taskName, final Task texturePackerTask) {
+        try {
+            Task task = taskContainer.getByName(taskName);
+            task.dependsOn(texturePackerTask);
+        } catch (UnknownTaskException ex) {
+            // Ignore
+        }
     }
 
 }
