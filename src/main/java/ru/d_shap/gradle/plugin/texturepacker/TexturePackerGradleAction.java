@@ -67,7 +67,7 @@ public class TexturePackerGradleAction implements Action<Task> {
         File sourceDir = _extensionConfiguration.getSourceDir();
         File[] sourceFiles = sourceDir.listFiles();
         File destinationDir = _extensionConfiguration.getDestinationDir();
-        ensureDestinationDirExists(destinationDir);
+        destinationDir.mkdirs();
         if (sourceFiles != null) {
             for (File sourceFile : sourceFiles) {
                 if (sourceFile.isDirectory()) {
@@ -77,13 +77,6 @@ public class TexturePackerGradleAction implements Action<Task> {
         }
         if (Logger.isWarnEnabled()) {
             Logger.warn("Finish processing images with TexturePacker");
-        }
-    }
-
-    private void ensureDestinationDirExists(final File destinationDir) {
-        File parentFile = destinationDir.getParentFile();
-        if (parentFile != null) {
-            parentFile.mkdirs();
         }
     }
 
