@@ -30,6 +30,7 @@ import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteStreamHandler;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.gradle.api.Action;
+import org.gradle.api.InvalidUserDataException;
 import org.gradle.api.Task;
 
 import ru.d_shap.gradle.plugin.texturepacker.configuration.ExtensionConfiguration;
@@ -65,8 +66,14 @@ public class TexturePackerGradleAction implements Action<Task> {
             Logger.warn("Start processing images with TexturePacker");
         }
         File sourceDir = _extensionConfiguration.getSourceDir();
+        if (sourceDir == null) {
+            throw new InvalidUserDataException("src must be defined");
+        }
         File[] sourceFiles = sourceDir.listFiles();
         File destinationDir = _extensionConfiguration.getDestinationDir();
+        if (destinationDir == null) {
+            throw new InvalidUserDataException("dst must be defined");
+        }
         destinationDir.mkdirs();
         if (sourceFiles != null) {
             for (File sourceFile : sourceFiles) {
@@ -83,8 +90,14 @@ public class TexturePackerGradleAction implements Action<Task> {
     private void processSourceDir(final File sourceDir, final File destinationDir) {
         String sourceDirName = sourceDir.getName();
         Closure<?> sheetNameClosure = _extensionConfiguration.getSheetNameClosure();
+        if (sheetNameClosure == null) {
+            throw new InvalidUserDataException("sheet must be defined");
+        }
         String sheetAbsolutePath = getAbsolutePath(sourceDirName, sheetNameClosure, destinationDir);
         Closure<?> dataNameClosure = _extensionConfiguration.getDataNameClosure();
+        if (dataNameClosure == null) {
+            throw new InvalidUserDataException("data must be defined");
+        }
         String dataAbsolutePath = getAbsolutePath(sourceDirName, dataNameClosure, destinationDir);
         String sourceDirAbsolutePath = sourceDir.getAbsolutePath();
         CommandLine commandLine = createCommandLine(sheetAbsolutePath, dataAbsolutePath, sourceDirAbsolutePath);
@@ -143,6 +156,7 @@ public class TexturePackerGradleAction implements Action<Task> {
             ExecuteStreamHandler streamHandler = new PumpStreamHandler(outputStream, errorOutputStream);
             executor.setStreamHandler(streamHandler);
             executor.execute(commandLine);
+
             String outputStr = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
             if (outputStr.length() > 0 && Logger.isInfoEnabled()) {
                 Logger.info(outputStr);
