@@ -67,12 +67,12 @@ public class TexturePackerGradleAction implements Action<Task> {
         }
         File sourceDir = _extensionConfiguration.getSourceDir();
         if (sourceDir == null) {
-            throw new InvalidUserDataException("src must be defined");
+            throw new InvalidUserDataException("src property must be defined");
         }
         File[] sourceFiles = sourceDir.listFiles();
         File destinationDir = _extensionConfiguration.getDestinationDir();
         if (destinationDir == null) {
-            throw new InvalidUserDataException("dst must be defined");
+            throw new InvalidUserDataException("dst property must be defined");
         }
         destinationDir.mkdirs();
         if (sourceFiles != null) {
@@ -91,12 +91,12 @@ public class TexturePackerGradleAction implements Action<Task> {
         String sourceDirName = sourceDir.getName();
         Closure<?> sheetNameClosure = _extensionConfiguration.getSheetNameClosure();
         if (sheetNameClosure == null) {
-            throw new InvalidUserDataException("sheet must be defined");
+            throw new InvalidUserDataException("sheet property must be defined");
         }
         String sheetAbsolutePath = getAbsolutePath(sourceDirName, sheetNameClosure, destinationDir);
         Closure<?> dataNameClosure = _extensionConfiguration.getDataNameClosure();
         if (dataNameClosure == null) {
-            throw new InvalidUserDataException("data must be defined");
+            throw new InvalidUserDataException("data property must be defined");
         }
         String dataAbsolutePath = getAbsolutePath(sourceDirName, dataNameClosure, destinationDir);
         String sourceDirAbsolutePath = sourceDir.getAbsolutePath();
