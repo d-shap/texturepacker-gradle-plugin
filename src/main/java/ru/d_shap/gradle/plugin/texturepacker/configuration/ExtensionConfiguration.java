@@ -19,6 +19,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 package ru.d_shap.gradle.plugin.texturepacker.configuration;
 
+import java.io.File;
+
+import org.gradle.api.Project;
+import org.gradle.api.file.ConfigurableFileTree;
+
+import groovy.lang.Closure;
+
 /**
  * The extension configuration.
  *
@@ -26,11 +33,83 @@ package ru.d_shap.gradle.plugin.texturepacker.configuration;
  */
 public class ExtensionConfiguration {
 
+    private final Project _project;
+
+    private File _sourceDir;
+
+    private File _destinationDir;
+
+    private final ParametersConfiguration _parametersConfiguration;
+
     /**
      * Create new object.
+     *
+     * @param project the project.
      */
-    public ExtensionConfiguration() {
+    public ExtensionConfiguration(final Project project) {
         super();
+        _project = project;
+        _sourceDir = null;
+        _destinationDir = null;
+        _parametersConfiguration = _project.getObjects().newInstance(ParametersConfiguration.class);
+    }
+
+    /**
+     * Get the source directory.
+     *
+     * @return the source directory.
+     */
+    public File getSourceDir() {
+        return _sourceDir;
+    }
+
+    /**
+     * Set the source directory.
+     *
+     * @param sourceDir the source directory.
+     */
+    public void src(final String sourceDir) {
+        ConfigurableFileTree fileTree = _project.fileTree(sourceDir);
+        _sourceDir = fileTree.getDir().getAbsoluteFile();
+    }
+
+    /**
+     * Get the destination directory.
+     *
+     * @return the destination directory.
+     */
+    public File getDestinationDir() {
+        return _destinationDir;
+    }
+
+    /**
+     * Set the destination directory.
+     *
+     * @param destinationDir the destination directory.
+     */
+    public void dst(final String destinationDir) {
+        File buildDir = _project.getBuildDir().getAbsoluteFile();
+        _destinationDir = new File(buildDir, destinationDir);
+    }
+
+    /**
+     * Get the parameters configuration.
+     *
+     * @return the parameters configuration.
+     */
+    public ParametersConfiguration getParameterConfiguration() {
+        return _parametersConfiguration;
+    }
+
+    /**
+     * Set the parameters configuration.
+     *
+     * @param closure the closure.
+     */
+    public void parameters(final Closure<? super ParametersConfiguration> closure) {
+        closure.setDelegate(_parametersConfiguration);
+        closure.setResolveStrategy(Closure.DELEGATE_ONLY);
+        closure.call();
     }
 
 }
