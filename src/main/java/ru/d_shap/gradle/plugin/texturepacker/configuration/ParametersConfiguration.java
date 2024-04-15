@@ -38,7 +38,6 @@ public class ParametersConfiguration {
         Set<String> set = new HashSet<>();
         set.add("data");
         set.add("sheet");
-        set.add("texture-format");
 
         EXCLUDED_ARGS = Collections.unmodifiableSet(set);
     }
@@ -73,16 +72,16 @@ public class ParametersConfiguration {
         if (EXCLUDED_ARGS.contains(arg)) {
             return;
         }
-        String[] stringArgs = toStringArray(args);
+        String[] stringArgs = getStringArgs(args);
         Parameter parameter = new Parameter(arg, stringArgs);
         _parameters.add(parameter);
     }
 
-    private String[] toStringArray(final Object object) {
+    private String[] getStringArgs(final Object object) {
         if (object instanceof Object[]) {
             String[] result = new String[((Object[]) object).length];
             for (int i = 0; i < ((Object[]) object).length; i++) {
-                result[i] = toString(((Object[]) object)[i]);
+                result[i] = getString(((Object[]) object)[i]);
             }
             return result;
         } else {
@@ -90,7 +89,7 @@ public class ParametersConfiguration {
         }
     }
 
-    private String toString(final Object object) {
+    private String getString(final Object object) {
         if (object instanceof String) {
             return (String) object;
         } else {
