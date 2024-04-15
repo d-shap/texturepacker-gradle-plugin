@@ -81,22 +81,35 @@ public class TexturePackerGradleAction implements Action<Task> {
     }
 
     private void processSourceDir(final File sourceDir, final File destinationDir) {
-        CommandLine commandLine = createCommandLine(sourceDir);
-        executeCommandLine(commandLine, destinationDir);
-    }
-
-    private CommandLine createCommandLine(final File sourceDir) {
-        CommandLine commandLine = new CommandLine(COMMAND);
-
         String sourceDirName = sourceDir.getName();
         Closure<?> sheetNameClosure = _extensionConfiguration.getSheetNameClosure();
-        String sheetName = callClosure(sourceDirName, sheetNameClosure);
-        commandLine.addArgument("--sheet");
-        commandLine.addArgument(sheetName);
+        String sheetAbsolutePath = getAbsolutePath(sourceDirName, sheetNameClosure, destinationDir);
         Closure<?> dataNameClosure = _extensionConfiguration.getDataNameClosure();
-        String dataName = callClosure(sourceDirName, dataNameClosure);
+        String dataAbsolutePath = getAbsolutePath(sourceDirName, dataNameClosure, destinationDir);
+        String sourceDirAbsolutePath = sourceDir.getAbsolutePath();
+        CommandLine commandLine = createCommandLine(sheetAbsolutePath, dataAbsolutePath, sourceDirAbsolutePath);
+        executeCommandLine(commandLine, sheetAbsolutePath, dataAbsolutePath, sourceDirAbsolutePath);
+    }
+
+    private String getAbsolutePath(final String sourceDirName, final Closure<?> closure, final File destinationDir) {
+        Object callResult = closure.call(sourceDirName);
+        String fileName;
+        if (callResult instanceof String) {
+            fileName = (String) callResult;
+        } else {
+            fileName = callResult.toString();
+        }
+        File file = new File(destinationDir, fileName);
+        return file.getAbsolutePath();
+    }
+
+    private CommandLine createCommandLine(final String sheetAbsolutePath, final String dataAbsolutePath, final String sourceDirAbsolutePath) {
+        CommandLine commandLine = new CommandLine(COMMAND);
+
+        commandLine.addArgument("--sheet");
+        commandLine.addArgument(sheetAbsolutePath);
         commandLine.addArgument("--data");
-        commandLine.addArgument(dataName);
+        commandLine.addArgument(dataAbsolutePath);
 
         ParametersConfiguration parametersConfiguration = _extensionConfiguration.getParameterConfiguration();
         List<Parameter> parameters = parametersConfiguration.getParameters();
@@ -108,7 +121,7 @@ public class TexturePackerGradleAction implements Action<Task> {
             }
         }
 
-        commandLine.addArgument(sourceDir.getAbsolutePath());
+        commandLine.addArgument(sourceDirAbsolutePath);
 
         if (Logger.isInfoEnabled()) {
             StringBuilder builder = new StringBuilder();
@@ -122,18 +135,9 @@ public class TexturePackerGradleAction implements Action<Task> {
         return commandLine;
     }
 
-    private String callClosure(final String sourceDirName, final Closure<?> closure) {
-        Object result = closure.call(sourceDirName);
-        if (result instanceof String) {
-            return (String) result;
-        } else {
-            return result.toString();
-        }
-    }
-
-    private void executeCommandLine(final CommandLine commandLine, final File destinationDir) {
+    private void executeCommandLine(final CommandLine commandLine, final String sheetAbsolutePath, final String dataAbsolutePath, final String sourceDirAbsolutePath) {
         try {
-            DefaultExecutor executor = DefaultExecutor.builder().setWorkingDirectory(destinationDir).get();
+            DefaultExecutor executor = DefaultExecutor.builder().get();
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ByteArrayOutputStream errorOutputStream = new ByteArrayOutputStream();
             ExecuteStreamHandler streamHandler = new PumpStreamHandler(outputStream, errorOutputStream);
@@ -146,6 +150,11 @@ public class TexturePackerGradleAction implements Action<Task> {
             String errorOutputStr = new String(errorOutputStream.toByteArray(), StandardCharsets.UTF_8);
             if (errorOutputStr.length() > 0 && Logger.isErrorEnabled()) {
                 Logger.error(errorOutputStr);
+            }
+            if (Logger.isWarnEnabled()) {
+                Logger.warn("Directory " + sourceDirAbsolutePath + " is processed");
+                Logger.warn("File " + sheetAbsolutePath + " is created");
+                Logger.warn("File " + dataAbsolutePath + " is created");
             }
         } catch (IOException ex) {
             if (Logger.isErrorEnabled()) {
