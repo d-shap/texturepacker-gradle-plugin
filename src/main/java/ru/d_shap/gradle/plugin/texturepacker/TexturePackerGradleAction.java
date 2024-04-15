@@ -56,11 +56,11 @@ public class TexturePackerGradleAction implements Action<Task> {
         File destinationDir = _extensionConfiguration.getDestinationDir();
         ensureDestinationDirExists(destinationDir);
         File sourceDir = _extensionConfiguration.getSourceDir();
-        File[] files = sourceDir.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    processSourceDir(file, destinationDir);
+        File[] sourceFiles = sourceDir.listFiles();
+        if (sourceFiles != null) {
+            for (File sourceFile : sourceFiles) {
+                if (sourceFile.isDirectory()) {
+                    processSourceDir(sourceFile, destinationDir);
                 }
             }
         }
