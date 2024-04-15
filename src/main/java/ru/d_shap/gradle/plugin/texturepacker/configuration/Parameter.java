@@ -30,15 +30,9 @@ public class Parameter {
 
     private final String[] _args;
 
-    /**
-     * Create new object.
-     *
-     * @param name the name.
-     * @param args the args.
-     */
-    public Parameter(final String name, final String[] args) {
+    Parameter(final String name, final String[] args) {
         super();
-        _name = name.replace('_', '-');
+        _name = name;
         _args = args;
     }
 

@@ -20,7 +20,10 @@
 package ru.d_shap.gradle.plugin.texturepacker.configuration;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The parameters configuration.
@@ -28,6 +31,17 @@ import java.util.List;
  * @author Dmitry Shapovalov
  */
 public class ParametersConfiguration {
+
+    private static final Set<String> EXCLUDED_ARGS;
+
+    static {
+        Set<String> set = new HashSet<>();
+        set.add("data");
+        set.add("sheet");
+        set.add("texture-format");
+
+        EXCLUDED_ARGS = Collections.unmodifiableSet(set);
+    }
 
     private final List<Parameter> _parameters;
 
@@ -55,8 +69,12 @@ public class ParametersConfiguration {
      * @param args the args.
      */
     public void methodMissing(final String name, final Object args) {
-        String[] stringArray = toStringArray(args);
-        Parameter parameter = new Parameter(name, stringArray);
+        String arg = name.replace('_', '-');
+        if (EXCLUDED_ARGS.contains(arg)) {
+            return;
+        }
+        String[] stringArgs = toStringArray(args);
+        Parameter parameter = new Parameter(arg, stringArgs);
         _parameters.add(parameter);
     }
 
