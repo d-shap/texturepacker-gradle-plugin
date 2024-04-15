@@ -20,12 +20,15 @@
 package ru.d_shap.gradle.plugin.texturepacker;
 
 import java.io.File;
+import java.util.List;
 
+import org.apache.commons.exec.CommandLine;
 import org.gradle.api.Action;
 import org.gradle.api.Task;
 
 import ru.d_shap.gradle.plugin.texturepacker.configuration.ExtensionConfiguration;
 import ru.d_shap.gradle.plugin.texturepacker.configuration.Parameter;
+import ru.d_shap.gradle.plugin.texturepacker.configuration.ParametersConfiguration;
 
 /**
  * TexturePacker gradle action.
@@ -53,14 +56,15 @@ public class TexturePackerGradleAction implements Action<Task> {
         if (Logger.isWarnEnabled()) {
             Logger.warn("Start processing images with TexturePacker");
         }
-        File destinationDir = _extensionConfiguration.getDestinationDir();
-        ensureDestinationDirExists(destinationDir);
         File sourceDir = _extensionConfiguration.getSourceDir();
         File[] sourceFiles = sourceDir.listFiles();
+        File destinationDir = _extensionConfiguration.getDestinationDir();
+        ensureDestinationDirExists(destinationDir);
+        ParametersConfiguration parametersConfiguration = _extensionConfiguration.getParameterConfiguration();
         if (sourceFiles != null) {
             for (File sourceFile : sourceFiles) {
                 if (sourceFile.isDirectory()) {
-                    processSourceDir(sourceFile, destinationDir);
+                    processSourceDir(sourceFile, destinationDir, parametersConfiguration);
                 }
             }
         }
@@ -76,18 +80,40 @@ public class TexturePackerGradleAction implements Action<Task> {
         }
     }
 
-    private void processSourceDir(final File sourceDir, final File destinationDir) {
-        if (Logger.isWarnEnabled()) {
-            Logger.warn(COMMAND);
-            Logger.warn(sourceDir.getAbsolutePath());
-            Logger.warn(destinationDir.getAbsolutePath());
-            for (Parameter parameter : _extensionConfiguration.getParameterConfiguration().getParameters()) {
-                Logger.warn("--" + parameter.getName());
-                for (String str : parameter.getArgs()) {
-                    Logger.warn(str);
-                }
+    private void processSourceDir(final File sourceDir, final File destinationDir, final ParametersConfiguration parametersConfiguration) {
+        CommandLine commandLine = createCommandLine(sourceDir, destinationDir, parametersConfiguration);
+        executeCommandLine(commandLine);
+    }
+
+    private CommandLine createCommandLine(final File sourceDir, final File destinationDir, final ParametersConfiguration parametersConfiguration) {
+        CommandLine commandLine = new CommandLine(COMMAND);
+        List<Parameter> parameters = parametersConfiguration.getParameters();
+        for (Parameter parameter : parameters) {
+            commandLine.addArgument("--" + parameter.getName());
+            String[] args = parameter.getArgs();
+            for (String arg : args) {
+                commandLine.addArgument(arg);
             }
         }
+        if (Logger.isInfoEnabled()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append(commandLine.getExecutable());
+            for (String argument : commandLine.getArguments()) {
+                builder.append(' ').append(argument);
+            }
+            Logger.info(builder.toString());
+        }
+
+        if (Logger.isWarnEnabled()) {
+            Logger.warn(sourceDir.getAbsolutePath());
+            Logger.warn(destinationDir.getAbsolutePath());
+        }
+
+        return commandLine;
+    }
+
+    private void executeCommandLine(final CommandLine commandLine) {
+        commandLine.getExecutable();
     }
 
 }
