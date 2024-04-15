@@ -53,12 +53,14 @@ public class TexturePackerGradleAction implements Action<Task> {
         if (Logger.isWarnEnabled()) {
             Logger.warn("Start processing images with TexturePacker");
         }
+        File destinationDir = _extensionConfiguration.getDestinationDir();
+        ensureDestinationDirExists(destinationDir);
         File sourceDir = _extensionConfiguration.getSourceDir();
         File[] files = sourceDir.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.isDirectory()) {
-                    processDirectory(file);
+                    processSourceDir(file, destinationDir);
                 }
             }
         }
@@ -67,11 +69,18 @@ public class TexturePackerGradleAction implements Action<Task> {
         }
     }
 
-    private void processDirectory(final File directory) {
+    private void ensureDestinationDirExists(final File destinationDir) {
+        File parentFile = destinationDir.getParentFile();
+        if (parentFile != null) {
+            parentFile.mkdirs();
+        }
+    }
+
+    private void processSourceDir(final File sourceDir, final File destinationDir) {
         if (Logger.isWarnEnabled()) {
             Logger.warn(COMMAND);
-            Logger.warn(directory.getAbsolutePath());
-            Logger.warn(_extensionConfiguration.getDestinationDir().getAbsolutePath());
+            Logger.warn(sourceDir.getAbsolutePath());
+            Logger.warn(destinationDir.getAbsolutePath());
             for (Parameter parameter : _extensionConfiguration.getParameterConfiguration().getParameters()) {
                 Logger.warn("--" + parameter.getName());
                 for (String str : parameter.getArgs()) {
