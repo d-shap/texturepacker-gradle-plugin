@@ -30,6 +30,8 @@ import ru.d_shap.gradle.plugin.texturepacker.configuration.ExtensionConfiguratio
 import ru.d_shap.gradle.plugin.texturepacker.configuration.Parameter;
 import ru.d_shap.gradle.plugin.texturepacker.configuration.ParametersConfiguration;
 
+import groovy.lang.Closure;
+
 /**
  * TexturePacker gradle action.
  *
@@ -60,11 +62,10 @@ public class TexturePackerGradleAction implements Action<Task> {
         File[] sourceFiles = sourceDir.listFiles();
         File destinationDir = _extensionConfiguration.getDestinationDir();
         ensureDestinationDirExists(destinationDir);
-        ParametersConfiguration parametersConfiguration = _extensionConfiguration.getParameterConfiguration();
         if (sourceFiles != null) {
             for (File sourceFile : sourceFiles) {
                 if (sourceFile.isDirectory()) {
-                    processSourceDir(sourceFile, destinationDir, parametersConfiguration);
+                    processSourceDir(sourceFile, destinationDir);
                 }
             }
         }
@@ -80,13 +81,25 @@ public class TexturePackerGradleAction implements Action<Task> {
         }
     }
 
-    private void processSourceDir(final File sourceDir, final File destinationDir, final ParametersConfiguration parametersConfiguration) {
-        CommandLine commandLine = createCommandLine(sourceDir, destinationDir, parametersConfiguration);
-        executeCommandLine(commandLine);
+    private void processSourceDir(final File sourceDir, final File destinationDir) {
+        CommandLine commandLine = createCommandLine(sourceDir);
+        executeCommandLine(commandLine, destinationDir);
     }
 
-    private CommandLine createCommandLine(final File sourceDir, final File destinationDir, final ParametersConfiguration parametersConfiguration) {
+    private CommandLine createCommandLine(final File sourceDir) {
         CommandLine commandLine = new CommandLine(COMMAND);
+
+        String sourceDirName = sourceDir.getName();
+        Closure<?> sheetNameClosure = _extensionConfiguration.getSheetNameClosure();
+        String sheetName = callClosure(sourceDirName, sheetNameClosure);
+        commandLine.addArgument("--sheet");
+        commandLine.addArgument(sheetName);
+        Closure<?> dataNameClosure = _extensionConfiguration.getDataNameClosure();
+        String dataName = callClosure(sourceDirName, dataNameClosure);
+        commandLine.addArgument("--data");
+        commandLine.addArgument(dataName);
+
+        ParametersConfiguration parametersConfiguration = _extensionConfiguration.getParameterConfiguration();
         List<Parameter> parameters = parametersConfiguration.getParameters();
         for (Parameter parameter : parameters) {
             commandLine.addArgument("--" + parameter.getName());
@@ -95,7 +108,9 @@ public class TexturePackerGradleAction implements Action<Task> {
                 commandLine.addArgument(arg);
             }
         }
+
         commandLine.addArgument(sourceDir.getAbsolutePath());
+
         if (Logger.isInfoEnabled()) {
             StringBuilder builder = new StringBuilder();
             builder.append(commandLine.getExecutable());
@@ -105,15 +120,21 @@ public class TexturePackerGradleAction implements Action<Task> {
             Logger.info(builder.toString());
         }
 
-        if (Logger.isWarnEnabled()) {
-            Logger.warn(destinationDir.getAbsolutePath());
-        }
-
         return commandLine;
     }
 
-    private void executeCommandLine(final CommandLine commandLine) {
+    private String callClosure(final String sourceDirName, final Closure<?> closure) {
+        Object result = closure.call(sourceDirName);
+        if (result instanceof String) {
+            return (String) result;
+        } else {
+            return result.toString();
+        }
+    }
+
+    private void executeCommandLine(final CommandLine commandLine, final File destinationDir) {
         commandLine.getExecutable();
+        destinationDir.getAbsolutePath();
     }
 
 }
