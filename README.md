@@ -25,7 +25,7 @@ Next parameters should be specified:
 
 The source directory should contain child directories, each child directory contains a set of images.
 For each directory a separate sheet and data files are created.
-The name of this child directory is passed to closures to generate a sheet and data file name.
+The name of this child directory is passed to closures to generate a sheet file name and a data file name.
 
 ## Example
 ```
