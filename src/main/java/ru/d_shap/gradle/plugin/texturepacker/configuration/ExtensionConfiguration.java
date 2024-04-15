@@ -39,6 +39,10 @@ public class ExtensionConfiguration {
 
     private File _destinationDir;
 
+    private Closure<?> _sheetNameClosure;
+
+    private Closure<?> _dataNameClosure;
+
     private final ParametersConfiguration _parametersConfiguration;
 
     /**
@@ -51,6 +55,8 @@ public class ExtensionConfiguration {
         _project = project;
         _sourceDir = null;
         _destinationDir = null;
+        _sheetNameClosure = null;
+        _dataNameClosure = null;
         _parametersConfiguration = _project.getObjects().newInstance(ParametersConfiguration.class);
     }
 
@@ -90,6 +96,42 @@ public class ExtensionConfiguration {
     public void dst(final String destinationDir) {
         File buildDir = _project.getBuildDir().getAbsoluteFile();
         _destinationDir = new File(buildDir, destinationDir);
+    }
+
+    /**
+     * Get the sheet name closure.
+     *
+     * @return the sheet name closure.
+     */
+    public Closure<?> getSheetNameClosure() {
+        return _sheetNameClosure;
+    }
+
+    /**
+     * Set the sheet name closure.
+     *
+     * @param closure the closure.
+     */
+    public void sheet(final Closure<?> closure) {
+        _sheetNameClosure = closure;
+    }
+
+    /**
+     * Get the data name closure.
+     *
+     * @return the data name closure.
+     */
+    public Closure<?> getDataNameClosure() {
+        return _dataNameClosure;
+    }
+
+    /**
+     * Set the data name closure.
+     *
+     * @param closure the closure.
+     */
+    public void data(final Closure<?> closure) {
+        _dataNameClosure = closure;
     }
 
     /**
