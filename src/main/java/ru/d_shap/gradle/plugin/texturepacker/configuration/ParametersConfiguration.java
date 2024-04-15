@@ -55,8 +55,29 @@ public class ParametersConfiguration {
      * @param args the args.
      */
     public void methodMissing(final String name, final Object args) {
-        Parameter parameter = new Parameter(name, args);
+        String[] stringArray = toStringArray(args);
+        Parameter parameter = new Parameter(name, stringArray);
         _parameters.add(parameter);
+    }
+
+    private String[] toStringArray(final Object object) {
+        if (object instanceof Object[]) {
+            String[] result = new String[((Object[]) object).length];
+            for (int i = 0; i < ((Object[]) object).length; i++) {
+                result[i] = toString(((Object[]) object)[i]);
+            }
+            return result;
+        } else {
+            return new String[0];
+        }
+    }
+
+    private String toString(final Object object) {
+        if (object instanceof String) {
+            return (String) object;
+        } else {
+            return object.toString();
+        }
     }
 
 }
