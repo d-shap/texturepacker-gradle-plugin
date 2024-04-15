@@ -19,6 +19,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 package ru.d_shap.gradle.plugin.texturepacker;
 
+import java.io.File;
+
 import org.gradle.api.Action;
 import org.gradle.api.Task;
 
@@ -51,9 +53,24 @@ public class TexturePackerGradleAction implements Action<Task> {
         if (Logger.isWarnEnabled()) {
             Logger.warn("Start processing images with TexturePacker");
         }
+        File sourceDir = _extensionConfiguration.getSourceDir();
+        File[] files = sourceDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    processDirectory(file);
+                }
+            }
+        }
+        if (Logger.isWarnEnabled()) {
+            Logger.warn("Finish processing images with TexturePacker");
+        }
+    }
+
+    private void processDirectory(final File directory) {
         if (Logger.isWarnEnabled()) {
             Logger.warn(COMMAND);
-            Logger.warn(_extensionConfiguration.getSourceDir().getAbsolutePath());
+            Logger.warn(directory.getAbsolutePath());
             Logger.warn(_extensionConfiguration.getDestinationDir().getAbsolutePath());
             for (Parameter parameter : _extensionConfiguration.getParameterConfiguration().getParameters()) {
                 Logger.warn("--" + parameter.getName());
@@ -61,9 +78,6 @@ public class TexturePackerGradleAction implements Action<Task> {
                     Logger.warn(str);
                 }
             }
-        }
-        if (Logger.isWarnEnabled()) {
-            Logger.warn("Finish processing images with TexturePacker");
         }
     }
 
