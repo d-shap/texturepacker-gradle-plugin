@@ -95,6 +95,7 @@ public class TexturePackerGradleAction implements Action<Task> {
                 commandLine.addArgument(arg);
             }
         }
+        commandLine.addArgument(sourceDir.getAbsolutePath());
         if (Logger.isInfoEnabled()) {
             StringBuilder builder = new StringBuilder();
             builder.append(commandLine.getExecutable());
@@ -105,7 +106,6 @@ public class TexturePackerGradleAction implements Action<Task> {
         }
 
         if (Logger.isWarnEnabled()) {
-            Logger.warn(sourceDir.getAbsolutePath());
             Logger.warn(destinationDir.getAbsolutePath());
         }
 
