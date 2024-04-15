@@ -23,6 +23,7 @@ import org.gradle.api.Action;
 import org.gradle.api.Task;
 
 import ru.d_shap.gradle.plugin.texturepacker.configuration.ExtensionConfiguration;
+import ru.d_shap.gradle.plugin.texturepacker.configuration.Parameter;
 
 /**
  * TexturePacker gradle action.
@@ -51,9 +52,17 @@ public class TexturePackerGradleAction implements Action<Task> {
             Logger.warn("Start processing images with TexturePacker");
         }
         if (Logger.isWarnEnabled()) {
-            if (_extensionConfiguration != null) {
-                Logger.warn("_extensionConfiguration:" + COMMAND);
+            Logger.warn(COMMAND);
+            Logger.warn(_extensionConfiguration.getSourceDir().getAbsolutePath());
+            Logger.warn(_extensionConfiguration.getDestinationDir().getAbsolutePath());
+            for (Parameter parameter : _extensionConfiguration.getParameterConfiguration().getParameters()) {
+                Logger.warn("--" + parameter.getName());
+                for (String str : parameter.getArgs()) {
+                    Logger.warn(str);
+                }
             }
+        }
+        if (Logger.isWarnEnabled()) {
             Logger.warn("Finish processing images with TexturePacker");
         }
     }
