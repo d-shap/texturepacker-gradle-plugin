@@ -18,7 +18,7 @@ plugins {
 Configure the plugin with a `texturepacker` block.
 Next parameters should be specified:
 * `src` - the source folder with images
-* `dst` - the destination folder for sheet and atlas
+* `dst` - the destination folder for a sheet and an atlas
 * `sheet` - the closure to create a sheet file name
 * `data` - the closure to create a data file name
 * `parameters` - parameters for texture packing
