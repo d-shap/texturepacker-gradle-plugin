@@ -24,7 +24,7 @@ package ru.d_shap.gradle.plugin.texturepacker.configuration;
  *
  * @author Dmitry Shapovalov
  */
-public class Parameter {
+public final class Parameter {
 
     private final String _name;
 
