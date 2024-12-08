@@ -34,14 +34,14 @@ import javax.inject.Inject;
  */
 public class ParametersConfiguration {
 
-    private static final Set<String> EXCLUDED_ARGS;
+    private static final Set<String> ARGS_TO_EXCLUDE;
 
     static {
         Set<String> set = new HashSet<>();
         set.add("data");
         set.add("sheet");
 
-        EXCLUDED_ARGS = Collections.unmodifiableSet(set);
+        ARGS_TO_EXCLUDE = Collections.unmodifiableSet(set);
     }
 
     private final List<Parameter> _parameters;
@@ -72,7 +72,7 @@ public class ParametersConfiguration {
      */
     public void methodMissing(final String name, final Object args) {
         String arg = name.replace('_', '-');
-        if (EXCLUDED_ARGS.contains(arg)) {
+        if (ARGS_TO_EXCLUDE.contains(arg)) {
             return;
         }
         String[] stringArgs = getStringArgs(args);
