@@ -25,6 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 /**
  * The parameters configuration.
  *
@@ -47,6 +49,7 @@ public class ParametersConfiguration {
     /**
      * Create new object.
      */
+    @Inject
     public ParametersConfiguration() {
         super();
         _parameters = new ArrayList<>();
