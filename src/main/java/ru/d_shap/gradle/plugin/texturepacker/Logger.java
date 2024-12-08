@@ -35,6 +35,24 @@ public final class Logger {
     }
 
     /**
+     * Check if debug level is enabled.
+     *
+     * @return true, if debug level is enabled.
+     */
+    public static boolean isDebugEnabled() {
+        return LOGGER_INSTANCE.isDebugEnabled();
+    }
+
+    /**
+     * Log the message with debug level.
+     *
+     * @param message the message.
+     */
+    public static void debug(final String message) {
+        LOGGER_INSTANCE.debug(message);
+    }
+
+    /**
      * Check if info level is enabled.
      *
      * @return true, if info level is enabled.
