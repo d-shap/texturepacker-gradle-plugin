@@ -11,7 +11,7 @@ TexturePacker --help
 Apply an appropriate version of a plugin:
 ```
 plugins {
-    id 'ru.d-shap.texturepacker' version '1.0'
+    id 'ru.d-shap.texturepacker' version '1.1'
 }
 ```
 
