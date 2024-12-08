@@ -94,7 +94,8 @@ public class PipelineConfiguration {
      */
     public void src(final String sourceDir) {
         ConfigurableFileTree fileTree = _project.fileTree(sourceDir);
-        _sourceDir = fileTree.getDir().getAbsoluteFile();
+        File sourceFile = fileTree.getDir();
+        _sourceDir = sourceFile.getAbsoluteFile();
     }
 
     /**
