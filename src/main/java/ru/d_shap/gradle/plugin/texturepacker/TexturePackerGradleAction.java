@@ -36,6 +36,7 @@ import org.gradle.api.Task;
 import ru.d_shap.gradle.plugin.texturepacker.configuration.ExtensionConfiguration;
 import ru.d_shap.gradle.plugin.texturepacker.configuration.Parameter;
 import ru.d_shap.gradle.plugin.texturepacker.configuration.ParametersConfiguration;
+import ru.d_shap.gradle.plugin.texturepacker.configuration.PipelineConfiguration;
 
 import groovy.lang.Closure;
 
@@ -65,20 +66,23 @@ public class TexturePackerGradleAction implements Action<Task> {
         if (Logger.isWarnEnabled()) {
             Logger.warn("Start processing images with TexturePacker");
         }
-        File sourceDir = _extensionConfiguration.getSourceDir();
-        if (sourceDir == null) {
-            throw new InvalidUserDataException("src property must be defined");
-        }
-        File[] sourceFiles = sourceDir.listFiles();
-        File destinationDir = _extensionConfiguration.getDestinationDir();
-        if (destinationDir == null) {
-            throw new InvalidUserDataException("dst property must be defined");
-        }
-        destinationDir.mkdirs();
-        if (sourceFiles != null) {
-            for (File sourceFile : sourceFiles) {
-                if (sourceFile.isDirectory()) {
-                    processSourceDir(sourceFile, destinationDir);
+        List<PipelineConfiguration> pipelineConfigurations = _extensionConfiguration.getPipelineConfigurations();
+        for (PipelineConfiguration pipelineConfiguration : pipelineConfigurations) {
+            File sourceDir = pipelineConfiguration.getSourceDir();
+            if (sourceDir == null) {
+                throw new InvalidUserDataException("src property must be defined");
+            }
+            File[] sourceFiles = sourceDir.listFiles();
+            File destinationDir = pipelineConfiguration.getDestinationDir();
+            if (destinationDir == null) {
+                throw new InvalidUserDataException("dst property must be defined");
+            }
+            destinationDir.mkdirs();
+            if (sourceFiles != null) {
+                for (File sourceFile : sourceFiles) {
+                    if (sourceFile.isDirectory()) {
+                        processSourceDir(pipelineConfiguration, sourceFile, destinationDir);
+                    }
                 }
             }
         }
@@ -87,20 +91,20 @@ public class TexturePackerGradleAction implements Action<Task> {
         }
     }
 
-    private void processSourceDir(final File sourceDir, final File destinationDir) {
+    private void processSourceDir(final PipelineConfiguration pipelineConfiguration, final File sourceDir, final File destinationDir) {
         String sourceDirName = sourceDir.getName();
-        Closure<?> sheetNameClosure = _extensionConfiguration.getSheetNameClosure();
+        Closure<?> sheetNameClosure = pipelineConfiguration.getSheetNameClosure();
         if (sheetNameClosure == null) {
             throw new InvalidUserDataException("sheet property must be defined");
         }
         String sheetAbsolutePath = getAbsolutePath(sourceDirName, sheetNameClosure, destinationDir);
-        Closure<?> dataNameClosure = _extensionConfiguration.getDataNameClosure();
+        Closure<?> dataNameClosure = pipelineConfiguration.getDataNameClosure();
         if (dataNameClosure == null) {
             throw new InvalidUserDataException("data property must be defined");
         }
         String dataAbsolutePath = getAbsolutePath(sourceDirName, dataNameClosure, destinationDir);
         String sourceDirAbsolutePath = sourceDir.getAbsolutePath();
-        CommandLine commandLine = createCommandLine(sheetAbsolutePath, dataAbsolutePath, sourceDirAbsolutePath);
+        CommandLine commandLine = createCommandLine(pipelineConfiguration, sheetAbsolutePath, dataAbsolutePath, sourceDirAbsolutePath);
         executeCommandLine(commandLine, sheetAbsolutePath, dataAbsolutePath, sourceDirAbsolutePath);
     }
 
@@ -116,7 +120,7 @@ public class TexturePackerGradleAction implements Action<Task> {
         return file.getAbsolutePath();
     }
 
-    private CommandLine createCommandLine(final String sheetAbsolutePath, final String dataAbsolutePath, final String sourceDirAbsolutePath) {
+    private CommandLine createCommandLine(final PipelineConfiguration pipelineConfiguration, final String sheetAbsolutePath, final String dataAbsolutePath, final String sourceDirAbsolutePath) {
         CommandLine commandLine = new CommandLine(COMMAND);
 
         commandLine.addArgument("--sheet");
@@ -124,7 +128,7 @@ public class TexturePackerGradleAction implements Action<Task> {
         commandLine.addArgument("--data");
         commandLine.addArgument(dataAbsolutePath);
 
-        ParametersConfiguration parametersConfiguration = _extensionConfiguration.getParameterConfiguration();
+        ParametersConfiguration parametersConfiguration = pipelineConfiguration.getParameterConfiguration();
         List<Parameter> parameters = parametersConfiguration.getParameters();
         for (Parameter parameter : parameters) {
             commandLine.addArgument("--" + parameter.getName());
