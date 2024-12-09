@@ -106,7 +106,6 @@ public class TexturePackerGradleAction implements Action<Task> {
                             builder.append(", exclude: ").append(exclude);
                             Logger.debug(builder.toString());
                         }
-
                         processSourceDir(sourceFile, destinationDir, sheetNameClosure, dataNameClosure, parametersConfiguration);
                     } else {
                         if (Logger.isDebugEnabled()) {
