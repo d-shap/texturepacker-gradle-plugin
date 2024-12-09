@@ -111,10 +111,20 @@ public class PipelineConfiguration {
         _sourceDir = sourceFile.getAbsoluteFile();
     }
 
+    /**
+     * Get the source directory to include.
+     *
+     * @return the source directory to include.
+     */
     public String getInclude() {
         return _include;
     }
 
+    /**
+     * Set the source directory to include.
+     *
+     * @param include the source directory to include.
+     */
     public void include(final String include) {
         _include = include;
     }
@@ -127,10 +137,20 @@ public class PipelineConfiguration {
         _includes = includes;
     }
 
+    /**
+     * Get the source directory to exclude.
+     *
+     * @return the source directory to exclude.
+     */
     public String getExclude() {
         return _exclude;
     }
 
+    /**
+     * Set the source directory to exclude.
+     *
+     * @param exclude the source directory to exclude.
+     */
     public void exclude(final String exclude) {
         _exclude = exclude;
     }
