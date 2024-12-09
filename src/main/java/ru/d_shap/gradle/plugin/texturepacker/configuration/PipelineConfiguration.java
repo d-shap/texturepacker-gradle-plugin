@@ -44,11 +44,7 @@ public class PipelineConfiguration {
 
     private File _sourceDir;
 
-    private String _include;
-
     private List<String> _includes;
-
-    private String _exclude;
 
     private List<String> _excludes;
 
@@ -72,9 +68,7 @@ public class PipelineConfiguration {
         _project = project;
         _name = name;
         _sourceDir = null;
-        _include = null;
         _includes = null;
-        _exclude = null;
         _excludes = null;
         _destinationDir = null;
         _sheetNameClosure = null;
@@ -113,24 +107,6 @@ public class PipelineConfiguration {
     }
 
     /**
-     * Get the source directory to include.
-     *
-     * @return the source directory to include.
-     */
-    public String getInclude() {
-        return _include;
-    }
-
-    /**
-     * Set the source directory to include.
-     *
-     * @param include the source directory to include.
-     */
-    public void include(final String include) {
-        _include = include;
-    }
-
-    /**
      * Get the source directories to include.
      *
      * @return the source directories to include.
@@ -150,24 +126,6 @@ public class PipelineConfiguration {
         } else {
             _includes = Arrays.asList(includes);
         }
-    }
-
-    /**
-     * Get the source directory to exclude.
-     *
-     * @return the source directory to exclude.
-     */
-    public String getExclude() {
-        return _exclude;
-    }
-
-    /**
-     * Set the source directory to exclude.
-     *
-     * @param exclude the source directory to exclude.
-     */
-    public void exclude(final String exclude) {
-        _exclude = exclude;
     }
 
     /**
