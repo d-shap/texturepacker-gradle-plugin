@@ -123,7 +123,7 @@ public class TexturePackerGradleAction implements Action<Task> {
         if (include != null && (exclude != null || excludes != null && !excludes.isEmpty())) {
             throw new InvalidUserDataException("Configuration can't have both include and exclude");
         }
-        if (excludes != null && !excludes.isEmpty() && (exclude != null || excludes != null && !excludes.isEmpty())) {
+        if (includes != null && !includes.isEmpty() && (exclude != null || excludes != null && !excludes.isEmpty())) {
             throw new InvalidUserDataException("Configuration can't have both include and exclude");
         }
         if (exclude != null && (include != null || includes != null && !includes.isEmpty())) {
