@@ -80,6 +80,12 @@ public class TexturePackerGradleAction implements Action<Task> {
             }
             destinationDir.mkdirs();
 
+            String include = pipelineConfiguration.getInclude();
+            List<String> includes = pipelineConfiguration.getIncludes();
+            String exclude = pipelineConfiguration.getExclude();
+            List<String> excludes = pipelineConfiguration.getExcludes();
+            checkConfigurationValid(include, includes, exclude, excludes);
+
             if (sourceFiles != null) {
                 for (File sourceFile : sourceFiles) {
                     if (sourceFile.isDirectory()) {
@@ -91,6 +97,10 @@ public class TexturePackerGradleAction implements Action<Task> {
         if (Logger.isInfoEnabled()) {
             Logger.info("Finish processing images with TexturePacker");
         }
+    }
+
+    private void checkConfigurationValid(final String include, final List<String> includes, final String exclude, final List<String> excludes) {
+
     }
 
     private void processSourceDir(final PipelineConfiguration pipelineConfiguration, final File sourceDir, final File destinationDir) {
