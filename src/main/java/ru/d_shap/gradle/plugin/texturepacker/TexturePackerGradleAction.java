@@ -73,11 +73,13 @@ public class TexturePackerGradleAction implements Action<Task> {
                 throw new InvalidUserDataException("src property must be defined");
             }
             File[] sourceFiles = sourceDir.listFiles();
+
             File destinationDir = pipelineConfiguration.getDestinationDir();
             if (destinationDir == null) {
                 throw new InvalidUserDataException("dst property must be defined");
             }
             destinationDir.mkdirs();
+
             if (sourceFiles != null) {
                 for (File sourceFile : sourceFiles) {
                     if (sourceFile.isDirectory()) {
