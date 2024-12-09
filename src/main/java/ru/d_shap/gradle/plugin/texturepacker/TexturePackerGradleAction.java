@@ -80,11 +80,9 @@ public class TexturePackerGradleAction implements Action<Task> {
             }
             destinationDir.mkdirs();
 
-            String include = pipelineConfiguration.getInclude();
-            List<String> includes = pipelineConfiguration.getIncludes();
-            String exclude = pipelineConfiguration.getExclude();
-            List<String> excludes = pipelineConfiguration.getExcludes();
-            checkConfigurationValid(include, includes, exclude, excludes);
+            List<String> include = pipelineConfiguration.getInclude();
+            List<String> exclude = pipelineConfiguration.getExclude();
+            checkConfigurationValid(include, exclude);
 
             Closure<?> sheetNameClosure = pipelineConfiguration.getSheetNameClosure();
             if (sheetNameClosure == null) {
@@ -99,15 +97,13 @@ public class TexturePackerGradleAction implements Action<Task> {
 
             if (sourceFiles != null) {
                 for (File sourceFile : sourceFiles) {
-                    if (shouldProcessSourceDir(sourceFile, include, includes, exclude, excludes)) {
+                    if (shouldProcessSourceDir(sourceFile, include, exclude)) {
                         if (Logger.isDebugEnabled()) {
                             StringBuilder builder = new StringBuilder();
                             String name = sourceFile.getName();
                             builder.append("Start processing source ").append(name);
                             builder.append(", include: ").append(include);
-                            builder.append(", includes: ").append(includes);
                             builder.append(", exclude: ").append(exclude);
-                            builder.append(", excludes: ").append(excludes);
                             Logger.debug(builder.toString());
                         }
 
@@ -118,9 +114,7 @@ public class TexturePackerGradleAction implements Action<Task> {
                             String name = sourceFile.getName();
                             builder.append("Skip processing source ").append(name);
                             builder.append(", include: ").append(include);
-                            builder.append(", includes: ").append(includes);
                             builder.append(", exclude: ").append(exclude);
-                            builder.append(", excludes: ").append(excludes);
                             Logger.debug(builder.toString());
                         }
                     }
@@ -132,58 +126,30 @@ public class TexturePackerGradleAction implements Action<Task> {
         }
     }
 
-    private void checkConfigurationValid(final String include, final List<String> includes, final String exclude, final List<String> excludes) {
-        if (include == null && (includes == null || includes.isEmpty()) && exclude == null && (excludes == null || excludes.isEmpty())) {
+    private void checkConfigurationValid(final List<String> include, final List<String> exclude) {
+        if ((include == null || include.isEmpty()) && (exclude == null || exclude.isEmpty())) {
             return;
         }
-        if (include != null && includes != null && !includes.isEmpty()) {
-            throw new InvalidUserDataException("Configuration can't have both include and includes");
-        }
-        if (exclude != null && excludes != null && !excludes.isEmpty()) {
-            throw new InvalidUserDataException("Configuration can't have both exclude and excludes");
-        }
-        if (include != null && (exclude != null || excludes != null && !excludes.isEmpty())) {
-            throw new InvalidUserDataException("Configuration can't have both include and exclude");
-        }
-        if (includes != null && !includes.isEmpty() && (exclude != null || excludes != null && !excludes.isEmpty())) {
-            throw new InvalidUserDataException("Configuration can't have both include and exclude");
-        }
-        if (exclude != null && (include != null || includes != null && !includes.isEmpty())) {
-            throw new InvalidUserDataException("Configuration can't have both include and exclude");
-        }
-        if (excludes != null && !excludes.isEmpty() && (include != null || includes != null && !includes.isEmpty())) {
+        if (include != null && !include.isEmpty() && exclude != null && !exclude.isEmpty()) {
             throw new InvalidUserDataException("Configuration can't have both include and exclude");
         }
     }
 
-    private boolean shouldProcessSourceDir(final File sourceFile, final String include, final List<String> includes, final String exclude, final List<String> excludes) {
+    private boolean shouldProcessSourceDir(final File sourceFile, final List<String> include, final List<String> exclude) {
         if (!sourceFile.isDirectory()) {
             return false;
         }
 
         String name = sourceFile.getName();
-
-        if (name.equals(include)) {
+        if (include != null && include.contains(name)) {
             return true;
         }
-        if (includes != null && includes.contains(name)) {
-            return true;
-        }
-
-        if (name.equals(exclude)) {
+        if (exclude != null && exclude.contains(name)) {
             return false;
         }
-        if (excludes != null && excludes.contains(name)) {
+        if (include != null && !include.isEmpty()) {
             return false;
         }
-
-        if (include != null) {
-            return false;
-        }
-        if (includes != null && !includes.isEmpty()) {
-            return false;
-        }
-
         return true;
     }
 
