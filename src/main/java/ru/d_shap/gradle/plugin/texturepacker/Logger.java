@@ -71,24 +71,6 @@ public final class Logger {
     }
 
     /**
-     * Check if warn level is enabled.
-     *
-     * @return true, if warn level is enabled.
-     */
-    public static boolean isWarnEnabled() {
-        return LOGGER_INSTANCE.isWarnEnabled();
-    }
-
-    /**
-     * Log the message with warn level.
-     *
-     * @param message the message.
-     */
-    public static void warn(final String message) {
-        LOGGER_INSTANCE.warn(message);
-    }
-
-    /**
      * Check if error level is enabled.
      *
      * @return true, if error level is enabled.
