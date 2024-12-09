@@ -86,10 +86,21 @@ public class TexturePackerGradleAction implements Action<Task> {
             List<String> excludes = pipelineConfiguration.getExcludes();
             checkConfigurationValid(include, includes, exclude, excludes);
 
+            Closure<?> sheetNameClosure = pipelineConfiguration.getSheetNameClosure();
+            if (sheetNameClosure == null) {
+                throw new InvalidUserDataException("Property sheet is udefined");
+            }
+            Closure<?> dataNameClosure = pipelineConfiguration.getDataNameClosure();
+            if (dataNameClosure == null) {
+                throw new InvalidUserDataException("Property data is udefined");
+            }
+
+            ParametersConfiguration parametersConfiguration = pipelineConfiguration.getParameterConfiguration();
+
             if (sourceFiles != null) {
                 for (File sourceFile : sourceFiles) {
                     if (shouldProcessSourceDir(sourceFile, include, includes, exclude, excludes)) {
-                        processSourceDir(pipelineConfiguration, sourceFile, destinationDir);
+                        processSourceDir(sourceFile, destinationDir, sheetNameClosure, dataNameClosure, parametersConfiguration);
                     }
                 }
             }
@@ -147,20 +158,12 @@ public class TexturePackerGradleAction implements Action<Task> {
         return true;
     }
 
-    private void processSourceDir(final PipelineConfiguration pipelineConfiguration, final File sourceDir, final File destinationDir) {
+    private void processSourceDir(final File sourceDir, final File destinationDir, final Closure<?> sheetNameClosure, final Closure<?> dataNameClosure, final ParametersConfiguration parametersConfiguration) {
         String sourceDirName = sourceDir.getName();
-        Closure<?> sheetNameClosure = pipelineConfiguration.getSheetNameClosure();
-        if (sheetNameClosure == null) {
-            throw new InvalidUserDataException("Property sheet is udefined");
-        }
         String sheetAbsolutePath = getAbsolutePath(sourceDirName, sheetNameClosure, destinationDir);
-        Closure<?> dataNameClosure = pipelineConfiguration.getDataNameClosure();
-        if (dataNameClosure == null) {
-            throw new InvalidUserDataException("Property data is udefined");
-        }
         String dataAbsolutePath = getAbsolutePath(sourceDirName, dataNameClosure, destinationDir);
         String sourceDirAbsolutePath = sourceDir.getAbsolutePath();
-        CommandLine commandLine = createCommandLine(pipelineConfiguration, sheetAbsolutePath, dataAbsolutePath, sourceDirAbsolutePath);
+        CommandLine commandLine = createCommandLine(sheetAbsolutePath, dataAbsolutePath, parametersConfiguration, sourceDirAbsolutePath);
         executeCommandLine(commandLine, sheetAbsolutePath, dataAbsolutePath, sourceDirAbsolutePath);
     }
 
@@ -176,7 +179,7 @@ public class TexturePackerGradleAction implements Action<Task> {
         return file.getAbsolutePath();
     }
 
-    private CommandLine createCommandLine(final PipelineConfiguration pipelineConfiguration, final String sheetAbsolutePath, final String dataAbsolutePath, final String sourceDirAbsolutePath) {
+    private CommandLine createCommandLine(final String sheetAbsolutePath, final String dataAbsolutePath, final ParametersConfiguration parametersConfiguration, final String sourceDirAbsolutePath) {
         CommandLine commandLine = new CommandLine(COMMAND);
 
         commandLine.addArgument("--sheet");
@@ -184,7 +187,6 @@ public class TexturePackerGradleAction implements Action<Task> {
         commandLine.addArgument("--data");
         commandLine.addArgument(dataAbsolutePath);
 
-        ParametersConfiguration parametersConfiguration = pipelineConfiguration.getParameterConfiguration();
         List<Parameter> parameters = parametersConfiguration.getParameters();
         for (Parameter parameter : parameters) {
             commandLine.addArgument("--" + parameter.getName());
