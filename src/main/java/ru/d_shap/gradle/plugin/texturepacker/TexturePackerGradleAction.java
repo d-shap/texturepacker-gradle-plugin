@@ -151,12 +151,12 @@ public class TexturePackerGradleAction implements Action<Task> {
         String sourceDirName = sourceDir.getName();
         Closure<?> sheetNameClosure = pipelineConfiguration.getSheetNameClosure();
         if (sheetNameClosure == null) {
-            throw new InvalidUserDataException("sheet property must be defined");
+            throw new InvalidUserDataException("Property sheet is udefined");
         }
         String sheetAbsolutePath = getAbsolutePath(sourceDirName, sheetNameClosure, destinationDir);
         Closure<?> dataNameClosure = pipelineConfiguration.getDataNameClosure();
         if (dataNameClosure == null) {
-            throw new InvalidUserDataException("data property must be defined");
+            throw new InvalidUserDataException("Property data is udefined");
         }
         String dataAbsolutePath = getAbsolutePath(sourceDirName, dataNameClosure, destinationDir);
         String sourceDirAbsolutePath = sourceDir.getAbsolutePath();
@@ -218,8 +218,8 @@ public class TexturePackerGradleAction implements Action<Task> {
             executor.execute(commandLine);
 
             String outputStr = new String(outputStream.toByteArray(), StandardCharsets.UTF_8);
-            if (outputStr.length() > 0 && Logger.isInfoEnabled()) {
-                Logger.info(outputStr);
+            if (outputStr.length() > 0 && Logger.isDebugEnabled()) {
+                Logger.debug(outputStr);
             }
             String errorOutputStr = new String(errorOutputStream.toByteArray(), StandardCharsets.UTF_8);
             if (errorOutputStr.length() > 0 && Logger.isErrorEnabled()) {
