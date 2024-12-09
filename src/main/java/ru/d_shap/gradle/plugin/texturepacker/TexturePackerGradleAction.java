@@ -100,7 +100,29 @@ public class TexturePackerGradleAction implements Action<Task> {
             if (sourceFiles != null) {
                 for (File sourceFile : sourceFiles) {
                     if (shouldProcessSourceDir(sourceFile, include, includes, exclude, excludes)) {
+                        if (Logger.isDebugEnabled()) {
+                            StringBuilder builder = new StringBuilder();
+                            String name = sourceFile.getName();
+                            builder.append("Start processing source ").append(name);
+                            builder.append(", include: ").append(include);
+                            builder.append(", includes: ").append(includes);
+                            builder.append(", exclude: ").append(exclude);
+                            builder.append(", excludes: ").append(excludes);
+                            Logger.debug(builder.toString());
+                        }
+
                         processSourceDir(sourceFile, destinationDir, sheetNameClosure, dataNameClosure, parametersConfiguration);
+                    } else {
+                        if (Logger.isDebugEnabled()) {
+                            StringBuilder builder = new StringBuilder();
+                            String name = sourceFile.getName();
+                            builder.append("Skip processing source ").append(name);
+                            builder.append(", include: ").append(include);
+                            builder.append(", includes: ").append(includes);
+                            builder.append(", exclude: ").append(exclude);
+                            builder.append(", excludes: ").append(excludes);
+                            Logger.debug(builder.toString());
+                        }
                     }
                 }
             }
