@@ -100,7 +100,27 @@ public class TexturePackerGradleAction implements Action<Task> {
     }
 
     private void checkConfigurationValid(final String include, final List<String> includes, final String exclude, final List<String> excludes) {
-
+        if (include == null && (includes == null || includes.isEmpty()) && exclude == null && (excludes == null || excludes.isEmpty())) {
+            return;
+        }
+        if (include != null && includes != null && !includes.isEmpty()) {
+            throw new InvalidUserDataException("Configuration can't have both include and includes");
+        }
+        if (exclude != null && excludes != null && !excludes.isEmpty()) {
+            throw new InvalidUserDataException("Configuration can't have both exclude and excludes");
+        }
+        if (include != null && (exclude != null || excludes != null && !excludes.isEmpty())) {
+            throw new InvalidUserDataException("Configuration can't have both include and exclude");
+        }
+        if (excludes != null && !excludes.isEmpty() && (exclude != null || excludes != null && !excludes.isEmpty())) {
+            throw new InvalidUserDataException("Configuration can't have both include and exclude");
+        }
+        if (exclude != null && (include != null || includes != null && !includes.isEmpty())) {
+            throw new InvalidUserDataException("Configuration can't have both include and exclude");
+        }
+        if (excludes != null && !excludes.isEmpty() && (include != null || includes != null && !includes.isEmpty())) {
+            throw new InvalidUserDataException("Configuration can't have both include and exclude");
+        }
     }
 
     private void processSourceDir(final PipelineConfiguration pipelineConfiguration, final File sourceDir, final File destinationDir) {
