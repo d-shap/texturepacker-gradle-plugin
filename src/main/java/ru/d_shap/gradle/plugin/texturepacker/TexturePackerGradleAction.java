@@ -63,8 +63,8 @@ public class TexturePackerGradleAction implements Action<Task> {
 
     @Override
     public void execute(final Task task) {
-        if (Logger.isWarnEnabled()) {
-            Logger.warn("Start processing images with TexturePacker");
+        if (Logger.isInfoEnabled()) {
+            Logger.info("Start processing images with TexturePacker");
         }
         List<PipelineConfiguration> pipelineConfigurations = _extensionConfiguration.getPipelineConfigurations();
         for (PipelineConfiguration pipelineConfiguration : pipelineConfigurations) {
@@ -86,8 +86,8 @@ public class TexturePackerGradleAction implements Action<Task> {
                 }
             }
         }
-        if (Logger.isWarnEnabled()) {
-            Logger.warn("Finish processing images with TexturePacker");
+        if (Logger.isInfoEnabled()) {
+            Logger.info("Finish processing images with TexturePacker");
         }
     }
 
@@ -140,13 +140,13 @@ public class TexturePackerGradleAction implements Action<Task> {
 
         commandLine.addArgument(sourceDirAbsolutePath);
 
-        if (Logger.isInfoEnabled()) {
+        if (Logger.isDebugEnabled()) {
             StringBuilder builder = new StringBuilder();
             builder.append(commandLine.getExecutable());
             for (String argument : commandLine.getArguments()) {
                 builder.append(' ').append(argument);
             }
-            Logger.info(builder.toString());
+            Logger.debug(builder.toString());
         }
 
         return commandLine;
@@ -169,10 +169,10 @@ public class TexturePackerGradleAction implements Action<Task> {
             if (errorOutputStr.length() > 0 && Logger.isErrorEnabled()) {
                 Logger.error(errorOutputStr);
             }
-            if (Logger.isWarnEnabled()) {
-                Logger.warn("Directory " + sourceDirAbsolutePath + " is processed");
-                Logger.warn("File " + sheetAbsolutePath + " is created");
-                Logger.warn("File " + dataAbsolutePath + " is created");
+            if (Logger.isInfoEnabled()) {
+                Logger.info("Directory " + sourceDirAbsolutePath + " is processed");
+                Logger.info("File " + sheetAbsolutePath + " is created");
+                Logger.info("File " + dataAbsolutePath + " is created");
             }
         } catch (IOException ex) {
             if (Logger.isErrorEnabled()) {
