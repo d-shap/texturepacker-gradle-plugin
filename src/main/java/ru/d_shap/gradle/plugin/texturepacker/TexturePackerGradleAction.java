@@ -155,6 +155,13 @@ public class TexturePackerGradleAction implements Action<Task> {
             return false;
         }
 
+        if (include != null) {
+            return false;
+        }
+        if (includes != null && !includes.isEmpty()) {
+            return false;
+        }
+
         return true;
     }
 
