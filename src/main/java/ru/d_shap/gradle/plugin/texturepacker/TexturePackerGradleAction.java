@@ -88,7 +88,7 @@ public class TexturePackerGradleAction implements Action<Task> {
 
             if (sourceFiles != null) {
                 for (File sourceFile : sourceFiles) {
-                    if (sourceFile.isDirectory()) {
+                    if (shouldProcessSourceDir(sourceFile, include, includes, exclude, excludes)) {
                         processSourceDir(pipelineConfiguration, sourceFile, destinationDir);
                     }
                 }
@@ -121,6 +121,30 @@ public class TexturePackerGradleAction implements Action<Task> {
         if (excludes != null && !excludes.isEmpty() && (include != null || includes != null && !includes.isEmpty())) {
             throw new InvalidUserDataException("Configuration can't have both include and exclude");
         }
+    }
+
+    private boolean shouldProcessSourceDir(final File sourceFile, final String include, final List<String> includes, final String exclude, final List<String> excludes) {
+        if (!sourceFile.isDirectory()) {
+            return false;
+        }
+
+        String name = sourceFile.getName();
+
+        if (name.equals(include)) {
+            return true;
+        }
+        if (includes != null && includes.contains(name)) {
+            return true;
+        }
+
+        if (name.equals(exclude)) {
+            return false;
+        }
+        if (excludes != null && excludes.contains(name)) {
+            return false;
+        }
+
+        return true;
     }
 
     private void processSourceDir(final PipelineConfiguration pipelineConfiguration, final File sourceDir, final File destinationDir) {
