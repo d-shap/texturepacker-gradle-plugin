@@ -20,6 +20,7 @@
 package ru.d_shap.gradle.plugin.texturepacker.configuration;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -143,8 +144,12 @@ public class PipelineConfiguration {
      *
      * @param includes the source directories to include.
      */
-    public void includes(final List<String> includes) {
-        _includes = includes;
+    public void includes(final String... includes) {
+        if (includes == null) {
+            _includes = null;
+        } else {
+            _includes = Arrays.asList(includes);
+        }
     }
 
     /**
@@ -179,8 +184,12 @@ public class PipelineConfiguration {
      *
      * @param excludes the source directories to exclude.
      */
-    public void setExcludes(final List<String> excludes) {
-        _excludes = excludes;
+    public void excludes(final String... excludes) {
+        if (excludes == null) {
+            _excludes = null;
+        } else {
+            _excludes = Arrays.asList(excludes);
+        }
     }
 
     /**
