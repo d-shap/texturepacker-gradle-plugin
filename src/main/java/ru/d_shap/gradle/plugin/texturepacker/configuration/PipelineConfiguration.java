@@ -44,9 +44,9 @@ public class PipelineConfiguration {
 
     private File _sourceDir;
 
-    private List<String> _includes;
+    private List<String> _include;
 
-    private List<String> _excludes;
+    private List<String> _exclude;
 
     private File _destinationDir;
 
@@ -68,8 +68,8 @@ public class PipelineConfiguration {
         _project = project;
         _name = name;
         _sourceDir = null;
-        _includes = null;
-        _excludes = null;
+        _include = null;
+        _exclude = null;
         _destinationDir = null;
         _sheetNameClosure = null;
         _dataNameClosure = null;
@@ -111,20 +111,20 @@ public class PipelineConfiguration {
      *
      * @return the source directories to include.
      */
-    public List<String> getIncludes() {
-        return _includes;
+    public List<String> getInclude() {
+        return _include;
     }
 
     /**
      * Set the source directories to include.
      *
-     * @param includes the source directories to include.
+     * @param include the source directories to include.
      */
-    public void includes(final String... includes) {
-        if (includes == null) {
-            _includes = null;
+    public void include(final String... include) {
+        if (include == null) {
+            _include = null;
         } else {
-            _includes = Arrays.asList(includes);
+            _include = Arrays.asList(include);
         }
     }
 
@@ -133,20 +133,20 @@ public class PipelineConfiguration {
      *
      * @return the source directories to exclude.
      */
-    public List<String> getExcludes() {
-        return _excludes;
+    public List<String> getExclude() {
+        return _exclude;
     }
 
     /**
      * Set the source directories to exclude.
      *
-     * @param excludes the source directories to exclude.
+     * @param exclude the source directories to exclude.
      */
-    public void excludes(final String... excludes) {
-        if (excludes == null) {
-            _excludes = null;
+    public void exclude(final String... exclude) {
+        if (exclude == null) {
+            _exclude = null;
         } else {
-            _excludes = Arrays.asList(excludes);
+            _exclude = Arrays.asList(exclude);
         }
     }
 
