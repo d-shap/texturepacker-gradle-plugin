@@ -62,12 +62,22 @@ public class TexturePackerGradlePlugin implements Plugin<Project> {
         TaskContainer tasks = project.getTasks();
         addDependency(tasks, "processResources", task);
         addDependency(tasks, "compileJava", task);
+        addMustRunAfter(tasks, "imageMagick", task);
     }
 
     private void addDependency(final TaskContainer tasks, final String otherTaskName, final Task task) {
         try {
             Task otherTask = tasks.getByName(otherTaskName);
             otherTask.dependsOn(task);
+        } catch (UnknownTaskException ex) {
+            // Ignore
+        }
+    }
+
+    private void addMustRunAfter(final TaskContainer tasks, final String otherTaskName, final Task task) {
+        try {
+            Task otherTask = tasks.getByName(otherTaskName);
+            task.mustRunAfter(otherTask);
         } catch (UnknownTaskException ex) {
             // Ignore
         }
