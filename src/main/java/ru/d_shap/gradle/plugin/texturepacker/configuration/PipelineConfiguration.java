@@ -129,10 +129,20 @@ public class PipelineConfiguration {
         _include = include;
     }
 
+    /**
+     * Get the source directories to include.
+     *
+     * @return the source directories to include.
+     */
     public List<String> getIncludes() {
         return _includes;
     }
 
+    /**
+     * Set the source directories to include.
+     *
+     * @param includes the source directories to include.
+     */
     public void includes(final List<String> includes) {
         _includes = includes;
     }
@@ -155,10 +165,20 @@ public class PipelineConfiguration {
         _exclude = exclude;
     }
 
+    /**
+     * Get the source directories to exclude.
+     *
+     * @return the source directories to exclude.
+     */
     public List<String> getExcludes() {
         return _excludes;
     }
 
+    /**
+     * Set the source directories to exclude.
+     *
+     * @param excludes the source directories to exclude.
+     */
     public void setExcludes(final List<String> excludes) {
         _excludes = excludes;
     }
