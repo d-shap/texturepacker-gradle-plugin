@@ -19,6 +19,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 package ru.d_shap.gradle.plugin.texturepacker;
 
+import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -48,24 +49,43 @@ public class TexturePackerGradlePlugin implements Plugin<Project> {
 
     @Override
     public void apply(final Project project) {
-        ExtensionContainer extensionContainer = project.getExtensions();
-        ExtensionConfiguration extensionConfiguration = extensionContainer.create(EXTENSION_NAME, ExtensionConfiguration.class);
-        Task texturePackerTask = project.task(TASK_NAME);
-        TexturePackerGradleAction texturePackerAction = new TexturePackerGradleAction(extensionConfiguration);
-        texturePackerTask.doLast(texturePackerAction);
+        Task task = project.task(TASK_NAME);
+        addDependencies(project, task);
 
-        TaskContainer taskContainer = project.getTasks();
-        addDependency(taskContainer, "processResources", texturePackerTask);
-        addDependency(taskContainer, "compileJava", texturePackerTask);
+        ExtensionConfiguration extensionConfiguration = getExtensionConfiguration(project);
+
+        addTaskAction(task, extensionConfiguration);
+        addProjectAction(project, task, extensionConfiguration);
     }
 
-    private void addDependency(final TaskContainer taskContainer, final String taskName, final Task texturePackerTask) {
+    private void addDependencies(final Project project, final Task task) {
+        TaskContainer tasks = project.getTasks();
+        addDependency(tasks, "processResources", task);
+        addDependency(tasks, "compileJava", task);
+    }
+
+    private void addDependency(final TaskContainer tasks, final String otherTaskName, final Task task) {
         try {
-            Task task = taskContainer.getByName(taskName);
-            task.dependsOn(texturePackerTask);
+            Task otherTask = tasks.getByName(otherTaskName);
+            otherTask.dependsOn(task);
         } catch (UnknownTaskException ex) {
             // Ignore
         }
+    }
+
+    private ExtensionConfiguration getExtensionConfiguration(final Project project) {
+        ExtensionContainer extensions = project.getExtensions();
+        return extensions.create(EXTENSION_NAME, ExtensionConfiguration.class, project);
+    }
+
+    private void addTaskAction(final Task task, final ExtensionConfiguration extensionConfiguration) {
+        Action<Task> action = new TexturePackerGradleAction(extensionConfiguration);
+        task.doLast(action);
+    }
+
+    private void addProjectAction(final Project project, final Task task, final ExtensionConfiguration extensionConfiguration) {
+        Action<Project> action = new TexturePackerGradleConfiguration(task, extensionConfiguration);
+        project.afterEvaluate(action);
     }
 
 }
