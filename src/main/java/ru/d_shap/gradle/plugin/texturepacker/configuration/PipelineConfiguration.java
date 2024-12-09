@@ -20,6 +20,7 @@
 package ru.d_shap.gradle.plugin.texturepacker.configuration;
 
 import java.io.File;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -42,6 +43,14 @@ public class PipelineConfiguration {
 
     private File _sourceDir;
 
+    private String _include;
+
+    private List<String> _includes;
+
+    private String _exclude;
+
+    private List<String> _excludes;
+
     private File _destinationDir;
 
     private Closure<?> _sheetNameClosure;
@@ -62,6 +71,10 @@ public class PipelineConfiguration {
         _project = project;
         _name = name;
         _sourceDir = null;
+        _include = null;
+        _includes = null;
+        _exclude = null;
+        _excludes = null;
         _destinationDir = null;
         _sheetNameClosure = null;
         _dataNameClosure = null;
@@ -96,6 +109,38 @@ public class PipelineConfiguration {
         ConfigurableFileTree fileTree = _project.fileTree(sourceDir);
         File sourceFile = fileTree.getDir();
         _sourceDir = sourceFile.getAbsoluteFile();
+    }
+
+    public String getInclude() {
+        return _include;
+    }
+
+    public void include(final String include) {
+        _include = include;
+    }
+
+    public List<String> getIncludes() {
+        return _includes;
+    }
+
+    public void includes(final List<String> includes) {
+        _includes = includes;
+    }
+
+    public String getExclude() {
+        return _exclude;
+    }
+
+    public void exclude(final String exclude) {
+        _exclude = exclude;
+    }
+
+    public List<String> getExcludes() {
+        return _excludes;
+    }
+
+    public void setExcludes(final List<String> excludes) {
+        _excludes = excludes;
     }
 
     /**
